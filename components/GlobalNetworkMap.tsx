@@ -1,42 +1,18 @@
 "use client";
 
-import dynamic from "next/dynamic";
-import L from "leaflet";
-import Image from "next/image";
 import { useEffect, useState } from "react";
+import Image from "next/image";
+import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 
-/* ------------------ Dynamic Leaflet Imports ------------------ */
-
-const MapContainer = dynamic(
-  () => import("react-leaflet").then(m => m.MapContainer),
-  { ssr: false }
-);
-
-const TileLayer = dynamic(
-  () => import("react-leaflet").then(m => m.TileLayer),
-  { ssr: false }
-);
-
-const Polyline = dynamic(
-  () => import("react-leaflet").then(m => m.Polyline),
-  { ssr: false }
-);
-
-const Marker = dynamic(
-  () => import("react-leaflet").then(m => m.Marker),
-  { ssr: false }
-);
-
-const Popup = dynamic(
-  () => import("react-leaflet").then(m => m.Popup),
-  { ssr: false }
-);
-
-const useMapEvents = dynamic(
-  () => import("react-leaflet").then(m => m.useMapEvents),
-  { ssr: false }
-);
+import {
+  MapContainer,
+  TileLayer,
+  Polyline,
+  Marker,
+  Popup,
+  useMapEvents,
+} from "react-leaflet";
 
 /* ------------------ Constants ------------------ */
 
@@ -50,7 +26,7 @@ const LOCATIONS = [
     url: "https://space.consulting",
   },
   {
-    name: "Germany",
+    name: "Germany (Berlin)",
     coords: [52.52, 13.405] as [number, number],
     logo: "/supBRT.svg",
     url: "#",
@@ -62,54 +38,57 @@ const LOCATIONS = [
     url: "#",
   },
   {
-    name: "Germany",
+    name: "Germany (Munich)",
     coords: [48.1351, 11.582] as [number, number],
     logo: "/superlab.svg",
     url: "#",
   },
 ];
 
-/* ------------------ Icons ------------------ */
+/* ------------------ Custom Icons ------------------ */
 
-const createNigeriaIcon = () =>
-  L.divIcon({
-    html: `
-      <div class="flex items-center justify-center w-5 h-5">
-        <div class="w-3.5 h-3.5 rounded-full bg-[#ff7a00] border-2 border-white shadow-lg"></div>
-      </div>
-    `,
-    className: "bg-transparent border-none",
-    iconSize: [20, 20],
-    iconAnchor: [10, 10],
-  });
+const nigeriaIcon = L.divIcon({
+  html: `
+    <div style="display:flex;align-items:center;justify-content:center;width:20px;height:20px;">
+      <div style="width:14px;height:14px;border-radius:50%;background:#ff7a00;border:2px solid white;box-shadow:0 0 6px rgba(0,0,0,0.4);"></div>
+    </div>
+  `,
+  className: "",
+  iconSize: [20, 20],
+  iconAnchor: [10, 10],
+});
 
 const createLocationIcon = (logo: string, name: string) =>
   L.divIcon({
     html: `
-      <div class="location-marker">
-        <img src="${logo}" alt="${name}" />
+      <div style="width:40px;height:40px;border-radius:12px;overflow:hidden;box-shadow:0 4px 12px rgba(0,0,0,0.3);background:white;display:flex;align-items:center;justify-content:center;">
+        <img src="${logo}" alt="${name}" style="width:100%;height:100%;object-fit:cover;" />
       </div>
     `,
-    className: "bg-transparent border-none",
+    className: "",
     iconSize: [40, 40],
     iconAnchor: [20, 20],
     popupAnchor: [0, -20],
   });
 
-/* ------------------ Handlers ------------------ */
+/* ------------------ Map Handlers ------------------ */
 
 function ScrollZoomHandler() {
-  const map = (useMapEvents as any)({
-    click: (map: any) => map.scrollWheelZoom.enable(),
-    mouseout: (map: any) => map.scrollWheelZoom.disable(),
+  useMapEvents({
+    click: (e) => {
+      e.target.scrollWheelZoom.enable();
+    },
+    mouseout: (e) => {
+      e.target.scrollWheelZoom.disable();
+    },
   });
 
   return null;
 }
 
-function MapResizeHandler() {
-  const map = (useMapEvents as any)({
-    load: (map: any) => {
+function ResizeHandler() {
+  const map = useMapEvents({
+    load: () => {
       setTimeout(() => map.invalidateSize(), 100);
     },
   });
@@ -127,7 +106,7 @@ function MapResizeHandler() {
   return null;
 }
 
-/* ------------------ Component ------------------ */
+/* ------------------ Main Component ------------------ */
 
 export default function NigeriaMap() {
   const [mounted, setMounted] = useState(false);
@@ -135,7 +114,7 @@ export default function NigeriaMap() {
   useEffect(() => {
     setMounted(true);
 
-    // Fix default Leaflet icons
+    // Fix default Leaflet icon paths
     delete (L.Icon.Default.prototype as any)._getIconUrl;
 
     L.Icon.Default.mergeOptions({
@@ -147,7 +126,7 @@ export default function NigeriaMap() {
 
   if (!mounted) {
     return (
-      <div className="flex items-center justify-center min-h-[500px] w-full bg-gray-50">
+      <div className="flex items-center justify-center min-h-[500px] w-full bg-gray-50 rounded-lg">
         <div className="text-center">
           <div className="text-3xl mb-2">🗺️</div>
           <p className="text-gray-600">Loading map...</p>
@@ -157,14 +136,14 @@ export default function NigeriaMap() {
   }
 
   return (
-    <div className="w-full h-[500px] relative z-0 rounded-lg overflow-hidden shadow-lg">
+    <div className="w-full h-[500px] relative rounded-lg overflow-hidden shadow-lg">
       <MapContainer
         center={[20, 20]}
         zoom={2}
-        className="h-full w-full"
         scrollWheelZoom={false}
+        className="h-full w-full"
       >
-        <MapResizeHandler />
+        <ResizeHandler />
         <ScrollZoomHandler />
 
         <TileLayer
@@ -172,28 +151,31 @@ export default function NigeriaMap() {
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
 
-        {LOCATIONS.map((loc, i) => (
+        {/* Connection Lines */}
+        {LOCATIONS.map((loc) => (
           <Polyline
-            key={i}
+            key={loc.name}
+            positions={[NIGERIA_COORDS, loc.coords]}
             pathOptions={{
               color: "#005F56",
               weight: 2,
               opacity: 0.6,
-              dashArray: "5, 8",
+              dashArray: "5,8",
             }}
-            positions={[NIGERIA_COORDS, loc.coords]}
           />
         ))}
 
-        <Marker position={NIGERIA_COORDS} icon={createNigeriaIcon()}>
+        {/* Nigeria Marker */}
+        <Marker position={NIGERIA_COORDS} icon={nigeriaIcon}>
           <Popup>
             <strong>Nigeria Hub</strong>
           </Popup>
         </Marker>
 
-        {LOCATIONS.map((loc, i) => (
+        {/* Location Markers */}
+        {LOCATIONS.map((loc) => (
           <Marker
-            key={i}
+            key={loc.name}
             position={loc.coords}
             icon={createLocationIcon(loc.logo, loc.name)}
           >
@@ -201,6 +183,7 @@ export default function NigeriaMap() {
               <a
                 href={loc.url}
                 target="_blank"
+                rel="noopener noreferrer"
                 className="flex items-center gap-2"
               >
                 <Image
