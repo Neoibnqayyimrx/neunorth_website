@@ -1,0 +1,14 @@
+export default {
+  name: 'about',
+  title: 'Who We Are',
+  type: 'object',
+  fields: [
+    { name: 'title', type: 'string', title: 'Section Title' },
+    { name: 'headline', type: 'string', title: 'Headline' },
+    { name: 'body', type: 'text', title: 'Body Text' },
+    { name: 'image', type: 'image', title: 'Image' },
+
+    { name: 'buttonText', type: 'string', title: 'Button Text' },
+    { name: 'buttonLink', type: 'string', title: 'Button Link' },
+  ],
+}

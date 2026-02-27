@@ -1,26 +1,474 @@
 @import "tailwindcss";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --color-blue: #59deca66;
+  --color-light-100: #e7f2ff;
+  --color-light-200: #bdbdbd;
+  --color-border-dark: #151024;
+  --color-dark-100: #0d161a;
+  --color-dark-200: #182830;
+  --radius: 0.625rem;
+  --background: #030708;
+  --foreground: #ffffff;
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.145 0 0);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.145 0 0);
+  --primary: #59deca66;
+  --primary-foreground: oklch(0.985 0 0);
+  --secondary: oklch(0.97 0 0);
+  --secondary-foreground: oklch(0.205 0 0);
+  --muted: oklch(0.97 0 0);
+  --muted-foreground: oklch(0.556 0 0);
+  --accent: oklch(0.97 0 0);
+  --accent-foreground: oklch(0.205 0 0);
+  --destructive: oklch(0.577 0.245 27.325);
+  --border: oklch(0.922 0 0);
+  --input: oklch(0.922 0 0);
+  --ring: oklch(0.708 0 0);
+  --sidebar-foreground: oklch(0.145 0 0);
+  --sidebar-primary: oklch(0.205 0 0);
+  --sidebar-primary-foreground: oklch(0.985 0 0);
+  --sidebar-accent: oklch(0.97 0 0);
+  --sidebar-accent-foreground: oklch(0.205 0 0);
+  --sidebar-border: oklch(0.922 0 0);
+  --sidebar-ring: oklch(0.708 0 0);
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-blue: var(--color-blue);
+  --color-light-100: var(--color-light-100);
+  --color-light-200: var(--color-light-200);
+  --color-border-dark: var(--color-border-dark);
+  --color-dark-100: var(--color-dark-100);
+  --color-dark-200: var(--color-dark-200);
+  --font-schibsted-grotesk: var(--font-schibsted-grotesk);
+  --font-martian-mono: var(--font-martian-mono);
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar: var(--sidebar);
+  --color-chart-5: var(--chart-5);
+  --color-chart-4: var(--chart-4);
+  --color-chart-3: var(--chart-3);
+  --color-chart-2: var(--chart-2);
+  --color-chart-1: var(--chart-1);
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-border: var(--border);
+  --color-destructive: var(--destructive);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent: var(--accent);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary: var(--secondary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary: var(--primary);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-popover: var(--popover);
+  --color-card-foreground: var(--card-foreground);
+  --color-card: var(--card);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+@utility flex-center {
+  @apply flex items-center justify-center;
+}
+@utility text-gradient {
+  @apply bg-linear-to-b from-[#59deca66] to-white bg-clip-text font-semibold text-transparent/20;
+}
+
+@utility glass {
+  @apply bg-[#12121280]/50 rounded-md bg-clip-padding backdrop-filter backdrop-blur-xl border-b border-border-dark;
+}
+
+@utility card-shadow {
+  box-shadow: 0px 4px 40px 0px #00000066;
+}
+
+/* Define the container styles as a utility */
+@utility container {
+  @apply mx-auto px-5 sm:px-10;
+}
+
+/* Hero Image Card Styling */
+@utility hero-image-card {
+  @apply glass card-shadow rounded-xl p-2 sm:p-3 relative overflow-hidden;
+  
+  &::before {
+    content: '';
+    @apply absolute inset-0 bg-linear-to-tr from-primary/10 to-transparent opacity-0 transition-opacity duration-300;
+  }
+  
+  &:hover::before {
+    @apply opacity-100;
+  }
+  
+  img {
+    @apply rounded-lg object-cover w-full h-auto transition-transform duration-500 hover:scale-105;
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+@utility hero-image-card-lg {
+  @apply hero-image-card p-3 sm:p-4;
+  
+  img {
+    @apply rounded-xl;
+  }
+}
+
+@utility hero-image-card-sm {
+  @apply hero-image-card p-1.5 sm:p-2;
+}
+ 
+:root {
+  --octagon-glow-color:   #59deca28;  /* primary ~16 % opacity  */
+  --octagon-border-color: #59deca66;  /* primary ~40 % opacity  */
+  --octagon-border-width: 4px;
+}
+
+@utility image-octagon {
+  position: relative;
+  display: inline-block;
+  overflow: hidden;
+  --_oct: polygon(
+    29.3% 0%,
+    70.7% 0%,
+    100% 29.3%,
+    100% 70.7%,
+    70.7% 100%,
+    29.3% 100%,
+    0%   70.7%,
+    0%   29.3%
+  );
+  clip-path: var(--_oct);
+
+  /* Ambient glow that bleeds out from behind the shape */
+  &::before {
+    content: '';
+    position: absolute;
+    inset: -15%;
+    background: radial-gradient(
+      ellipse at 50% 50%,
+      var(--octagon-glow-color) 0%,
+      transparent 65%
+    );
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* Glowing border traced along the octagon edge */
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    clip-path: var(--_oct);
+    border: var(--octagon-border-width) solid var(--octagon-border-color);
+    /* Subtle inner glow on the border itself */
+    box-shadow: inset 0 0 12px 2px #59deca18;
+    pointer-events: none;
+    z-index: 2;
+  }
+
+  img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    position: relative;
+    z-index: 1;
+    transform-origin: center;
+    transition: transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  }
+
+  &:hover img {
+    transform: scale(1.07);
+  }
+}
+
+/* ── Wider / portrait-friendly octagon ───────────────────────────────────── */
+/* Smaller corner cuts (20%) → more image visible, feels wider                */
+@utility image-octagon-wide {
+  @apply image-octagon;
+  --_oct: polygon(
+    20% 0%,
+    80% 0%,
+    100% 20%,
+    100% 80%,
+    80% 100%,
+    20% 100%,
+    0%  80%,
+    0%  20%
+  );
+  clip-path: var(--_oct);
+
+  &::after {
+    clip-path: var(--_oct);
+  }
+}
+
+/* ── Rotated octagon (22.5° — diamond with clipped tips) ─────────────────── */
+@utility image-octagon-rotated {
+  @apply image-octagon;
+  --_oct: polygon(
+    50%  0%,
+    79%  7%,
+    100% 29%,
+    100% 71%,
+    79%  93%,
+    50%  100%,
+    21%  93%,
+    0%   71%,
+    0%   29%,
+    21%  7%
+  );
+  clip-path: var(--_oct);
+
+  &::after {
+    clip-path: var(--_oct);
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+  }
+
+  main {
+    @apply flex flex-col py-10;
+  }
+
+  h1 {
+    @apply text-gradient text-6xl font-semibold max-sm:text-4xl;
+  }
+
+  h3 {
+    @apply font-schibsted-grotesk text-2xl font-bold;
+  }
+
+  ul {
+    @apply list-disc list-inside;
+  }
+}
+
+@layer components {
+  
+  header {
+    @apply glass sticky top-0 z-50;
+
+    nav {
+      @apply container flex flex-row justify-between py-4;
+    }
+
+    .logo {
+      @apply flex flex-row items-center gap-2;
+
+      p {
+        @apply text-xl font-bold italic max-sm:hidden;
+      }
+    }
+
+    ul {
+      @apply font-bold flex flex-row items-center gap-6;
+    }
+  }
+
+  footer {
+  @apply bg-background text-foreground py-12 border-t border-border-dark;
+
+  .logo {
+    @apply flex flex-row items-center gap-2;
+
+    p {
+      @apply text-xl font-bold italic max-sm:hidden;
+    }
+  }
+
+  /* Target all links in footer sections */
+  .flex.flex-col.gap-2 a {
+    @apply font-bold hover:text-primary transition-colors duration-200;
+  }
+}
+
+
+
+  #hero {
+    @apply container grid lg:grid-cols-2 grid-cols-1 items-center gap-8 lg:gap-12 py-10 lg:py-9;
+    
+    .content {
+      @apply flex flex-col gap-6;
+
+      h1 {
+        @apply text-gradient text-2xl sm:text-3xl lg:text-5xl leading-tight;
+        
+        br {
+          @apply hidden lg:block;
+        }
+      }
+
+      p {
+        @apply text-light-100 text-base sm:text-lg max-w-xl leading-relaxed;
+      }
+
+      .actions {
+        @apply flex flex-row gap-4 pt-4 max-sm:flex-col;
+        
+        a {
+          @apply w-full sm:w-auto;
+        }
+        
+        button {
+          @apply w-full sm:w-auto px-6 py-2.5 text-base sm:text-lg font-semibold transition-all duration-300 hover:translate-y-[-2px] hover:shadow-lg;
+        }
+      }
+    }
+
+    .visual {
+      @apply flex-center relative;
+      
+      /* Ambient glow that sits behind the triangle shape */
+      &::before {
+        content: '';
+        position: absolute;
+        inset: -8%;
+        background: radial-gradient(
+          ellipse at 50% 60%,
+          #59deca18 0%,
+          transparent 65%
+        );
+        pointer-events: none;
+        z-index: 0;
+      }
+
+      /* ── Triangle image wrapper ── */
+      /*
+        The wrapper is a square so the triangle is a perfect equilateral-ish
+        shape. Adjust the width class on the element itself to resize it.
+        Default: w-[420px] h-[420px] on desktop, smaller on mobile.
+        The image-triangle utility handles clip-path, glow and hover-zoom.
+      */
+      .image-card {
+        @apply image-octagon relative z-10 w-[300px] h-[300px] sm:w-[380px] sm:h-[380px] lg:w-[480px] lg:h-[480px];
+      }
+    }
+  }
+
+  
+  #event {
+    @apply container;
+    
+    .header {
+      @apply flex w-2/3 flex-col items-start gap-4 max-lg:w-full mb-10;
+    }
+
+    .details {
+      @apply flex w-full flex-col lg:flex-row gap-12 items-start mt-12 max-lg:items-center;
+
+      .content {
+        @apply flex flex-[2] flex-col gap-8 max-lg:w-full;
+
+        .banner {
+          @apply max-h-[457px] w-full rounded-lg object-cover;
+        }
+
+        .agenda {
+          @apply flex flex-col gap-2;
+
+          ul {
+            li {
+              @apply text-light-100 text-lg max-sm:text-sm;
+            }
+          }
+        }
+      }
+    }
+
+    h2 {
+      @apply font-schibsted-grotesk text-2xl font-bold;
+    }
+
+    p {
+      @apply text-light-100 text-lg max-sm:text-sm;
+    }
+
+    .flex-col-gap-2 {
+      @apply flex flex-col gap-2;
+    }
+
+    .flex-row-gap-2 {
+      @apply flex flex-row gap-2;
+    }
+
+    button {
+      @apply bg-primary hover:bg-primary/90 w-full cursor-pointer items-center justify-center rounded-[6px] px-4 py-2.5 text-lg font-semibold text-black transition-all duration-300 hover:translate-y-[-2px] hover:shadow-lg;
+    }
+  }
+}
+
+/* Glass Card Base */
+.glass-card {
+  @apply bg-black/40 backdrop-blur-xl rounded-3xl
+         border border-white/10
+         shadow-lg w-[95%]
+         h-[420px] flex flex-col cursor-pointer overflow-hidden
+         transition-all duration-300 ease-out;
+}
+
+
+/* Hover Behavior */
+.glass-card-hover {
+  @apply hover:-translate-y-2
+         hover:border-primary border-2;
+}
+
+
+
+/* Image Animation */
+.glass-card-image {
+  @apply object-cover transition-transform duration-500;
+}
+
+.glass-card:hover .glass-card-image {
+  @apply scale-110;
+}
+
+/* Logo Animation */
+.glass-card-logo {
+  @apply transition-all duration-300;
+}
+
+.glass-card:hover .glass-card-logo {
+  @apply scale-110;
+}
+
+  /* ---------------- LOGO MARKERS ---------------- */
+
+   .location-marker {
+  @apply w-10 h-10 rounded-full border-2 border-primary 
+         bg-black/50 backdrop-blur-md 
+         flex items-center justify-center 
+         transition-transform duration-200 
+         hover:scale-110;
+}
+
+.location-marker img {
+  @apply w-[65%] h-[65%] object-cover;
 }
